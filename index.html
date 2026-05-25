@@ -1,1 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Smart Home Automation System</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+      scroll-behavior:smooth;
+    }
+
+    body{
+      background:#050816;
+      color:#ffffff;
+      font-family:'Inter',sans-serif;
+      line-height:1.7;
+    }
+
+    a{
+      text-decoration:none;
+    }
+
+    .container{
+      width:90%;
+      max-width:1400px;
+      margin:auto;
+    }
+
+    section{
+      padding:100px 0;
+    }
+
+    h1,h2,h3{
+      font-weight:700;
+      margin-bottom:20px;
+    }
+
+    h1{
+      font-size:4rem;
+      line-height:1.1;
+    }
+
+    h2{
+      font-size:2.5rem;
+      color:#00F5D4;
+    }
+
+    p{
+      color:#cbd5e1;
+      font-size:1.05rem;
+    }
+
+    .hero{
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      text-align:center;
+      background:
+      radial-gradient(circle at top,#0f172a,#050816);
+    }
+
+    .hero-content{
+      width:100%;
+    }
+
+    .hero p{
+      max-width:900px;
+      margin:30px auto;
+      font-size:1.2rem;
+    }
+
+    .btn{
+      display:inline-block;
+      margin-top:30px;
+      padding:14px 32px;
+      border-radius:10px;
+      background:#00F5D4;
+      color:#000;
+      font-weight:600;
+      transition:0.3s;
+    }
+
+    .btn:hover{
+      transform:translateY(-3px);
+      box-shadow:0 0 25px #00F5D4;
+    }
+
+    .section-title{
+      margin-bottom:50px;
+      text-align:center;
+    }
+
+    .card{
+      background:rgba(255,255,255,0.03);
+      border:1px solid rgba(255,255,255,0.08);
+      border-radius:20px;
+      padding:30px;
+      backdrop-filter:blur(10px);
+      margin-bottom:40px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:30px;
+    }
+
+    img{
+      width:100%;
+      border-radius:18px;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    .tech-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:15px;
+      justify-content:center;
+      margin-top:40px;
+    }
+
+    .tech{
+      padding:12px 20px;
+      border-radius:12px;
+      background:#0f172a;
+      border:1px solid rgba(255,255,255,0.08);
+    }
+
+    footer{
+      text-align:center;
+      padding:40px 0;
+      color:#94a3b8;
+      border-top:1px solid rgba(255,255,255,0.08);
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!-- HERO -->
+
+  <section class="hero">
+
+    <div class="container hero-content">
+
+      <h1>
+        Energy-Efficient Smart Home Automation Using ESP32, MQTT and AI-Based Voice Command Processing
+      </h1>
+
+      <p>
+        Low-cost intelligent smart home automation system integrating MQTT communication,
+        AI-assisted voice control, real-time dashboard synchronization and embedded control engineering.
+      </p>
+
+      <a class="btn"
+      href="https://github.com/iradukunda3546nj/Energy-Efficient-Smart-Home-Automation-Using-ESP32-MQTT-and-AI-Based-Voice-Command-Processing">
+      View Repository
+      </a>
+
+    </div>
+
+  </section>
+
+  <!-- OVERVIEW -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2>System Overview</h2>
+      </div>
+
+      <div class="card">
+
+        <p>
+          This project presents a scalable and intelligent smart home automation platform
+          designed using ESP32 microcontrollers, MQTT communication architecture and
+          AI-assisted voice interaction technologies.
+        </p>
+
+        <br>
+
+        <p>
+          The system supports:
+        </p>
+
+        <br>
+
+        <ul>
+          <li>Real-time MQTT device synchronization</li>
+          <li>AI-based voice-assisted control</li>
+          <li>Manual local override operation</li>
+          <li>Web dashboard monitoring and control</li>
+          <li>Environmental telemetry monitoring</li>
+        </ul>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- ARCHITECTURE -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2>System Architecture</h2>
+      </div>
+
+      <div class="card">
+        <img src="images/SYS BD.drawio.png">
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- MQTT -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2>MQTT Communication Workflow</h2>
+      </div>
+
+      <div class="card">
+        <img src="images/Mqtt.drawio.png">
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- VOICE -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2>Voice Processing Pipeline</h2>
+      </div>
+
+      <div class="card">
+        <img src="images/Voice Proc pipeline.drawio.png">
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- DASHBOARD -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2>Dashboard Interface</h2>
+      </div>
+
+      <div class="grid">
+
+        <div class="card">
+          <img src="images/dashboard_main.png">
+        </div>
+
+        <div class="card">
+          <img src="images/dashboard_voice.png">
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- TECHNOLOGY -->
+
+  <section>
+
+    <div class="container">
+
+      <div class="section-title">
+        <h2>Technology Stack</h2>
+      </div>
+
+      <div class="tech-list">
+
+        <div class="tech">ESP32</div>
+        <div class="tech">MQTT</div>
+        <div class="tech">HiveMQ</div>
+        <div class="tech">Mosquitto</div>
+        <div class="tech">HTML/CSS/JavaScript</div>
+        <div class="tech">Speech Recognition API</div>
+        <div class="tech">LLM API</div>
+        <div class="tech">PubSubClient</div>
+        <div class="tech">Arduino Framework</div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    Smart Home Automation System Engineering Project
+
+  </footer>
+
+</body>
+
+</html>
