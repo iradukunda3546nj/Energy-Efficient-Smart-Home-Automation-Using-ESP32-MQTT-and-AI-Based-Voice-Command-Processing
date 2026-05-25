@@ -166,7 +166,7 @@ void handleButtons() {
           if (pressed) {
             c.fsm = BTN_PRESSED;
 
-            // 🔥 ACTION TRIGGER (ONLY ONCE)
+            // ACTION TRIGGER (ONLY ONCE)
             applyChannel(i + 1, !c.state);
           } else {
             c.fsm = BTN_IDLE;
