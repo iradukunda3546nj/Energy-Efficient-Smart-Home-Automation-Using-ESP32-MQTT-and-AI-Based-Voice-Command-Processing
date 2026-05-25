@@ -2,12 +2,11 @@
 #include <PubSubClient.h>
 #include <DHT.h>
 
-/* ================= CONFIG ================= */
-// const char* ssid = "Pixel_6973";
-// const char* password = "123456789";
+/* =================Wi-Fi CONFIG ================= */
 
-#define WIFI_SSID "CANALBOX-994A-2G"
-#define WIFI_PASS "Home@2025"
+
+#define WIFI_SSID "..."//Put your wi-fi credentials
+#define WIFI_PASS "...."
 
 #define MQTT_HOST "broker.hivemq.com"
 #define MQTT_PORT 1883
