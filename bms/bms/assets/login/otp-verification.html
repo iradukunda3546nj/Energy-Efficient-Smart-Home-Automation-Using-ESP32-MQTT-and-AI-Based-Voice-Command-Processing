@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify OTP — Urugo Management System</title>
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <a href="login.html" class="logo">
+      <div class="logo-icon">
+        <span></span><span></span>
+        <span></span><span></span>
+      </div>
+      <div class="logo-text">
+        <div class="logo-name">Urugo</div>
+        <div class="logo-sub">Management System</div>
+      </div>
+    </a>
+
+    <!-- Header -->
+    <div class="auth-header">
+      <h1 class="auth-title">Verify your phone</h1>
+      <p class="auth-subtitle" id="otpSubtitle">
+        Enter the 6-digit code sent to your phone number.
+      </p>
+    </div>
+
+    <!-- Info box -->
+    <div class="info-box" style="margin-bottom:1.25rem">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>The OTP expires in <strong>5 minutes</strong>. Do not share it with anyone.</span>
+    </div>
+
+    <!-- OTP Form -->
+    <form class="auth-form" id="otpForm" novalidate>
+
+      <div class="otp-group" id="otpGroup">
+        <input class="otp-input" type="text" inputmode="numeric" maxlength="1" data-index="0" aria-label="OTP digit 1" />
+        <input class="otp-input" type="text" inputmode="numeric" maxlength="1" data-index="1" aria-label="OTP digit 2" />
+        <input class="otp-input" type="text" inputmode="numeric" maxlength="1" data-index="2" aria-label="OTP digit 3" />
+        <input class="otp-input" type="text" inputmode="numeric" maxlength="1" data-index="3" aria-label="OTP digit 4" />
+        <input class="otp-input" type="text" inputmode="numeric" maxlength="1" data-index="4" aria-label="OTP digit 5" />
+        <input class="otp-input" type="text" inputmode="numeric" maxlength="1" data-index="5" aria-label="OTP digit 6" />
+      </div>
+
+      <!-- Timer -->
+      <div class="otp-timer">
+        Code expires in <span id="timerDisplay">05:00</span>
+        <button type="button" class="resend-btn" id="resendBtn">Resend code</button>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="verifyBtn" disabled>
+        <span class="btn-text">Verify &amp; Activate</span>
+        <div class="spinner"></div>
+      </button>
+
+    </form>
+
+    <div class="auth-footer">
+      Wrong number? <a href="signup.html">Go back</a>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Load pending user from sessionStorage
+  const pending = JSON.parse(sessionStorage.getItem('urugo_pending_user') || '{}');
+  const subtitle = document.getElementById('otpSubtitle');
+  if (pending.phone) {
+    const masked = pending.phone.slice(0, 5) + '••••' + pending.phone.slice(-3);
+    subtitle.textContent = `Enter the 6-digit code sent to ${masked}`;
+  }
+
+  // OTP inputs behaviour
+  const inputs  = Array.from(document.querySelectorAll('.otp-input'));
+  const verifyBtn = document.getElementById('verifyBtn');
+
+  function getOtp() { return inputs.map(i => i.value).join(''); }
+  function checkComplete() {
+    const complete = getOtp().length === 6;
+    verifyBtn.disabled = !complete;
+    inputs.forEach(i => i.classList.toggle('filled', i.value !== ''));
+  }
+
+  inputs.forEach((inp, idx) => {
+    inp.addEventListener('input', e => {
+      const val = e.target.value.replace(/\D/g, '');
+      inp.value = val.slice(-1);
+      checkComplete();
+      if (val && idx < inputs.length - 1) inputs[idx + 1].focus();
+    });
+
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Backspace' && !inp.value && idx > 0) {
+        inputs[idx - 1].focus();
+        inputs[idx - 1].value = '';
+        checkComplete();
+      }
+      if (e.key === 'ArrowLeft'  && idx > 0)               inputs[idx - 1].focus();
+      if (e.key === 'ArrowRight' && idx < inputs.length -1) inputs[idx + 1].focus();
+    });
+
+    // Support pasting full OTP
+    inp.addEventListener('paste', e => {
+      e.preventDefault();
+      const pasted = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+      pasted.split('').forEach((ch, i) => { if (inputs[i]) inputs[i].value = ch; });
+      checkComplete();
+      const nextEmpty = inputs.findIndex(i => !i.value);
+      if (nextEmpty !== -1) inputs[nextEmpty].focus(); else inputs[5].focus();
+    });
+  });
+
+  inputs[0].focus();
+
+  // Countdown timer
+  let secondsLeft = 300;
+  const timerEl   = document.getElementById('timerDisplay');
+  const resendBtn  = document.getElementById('resendBtn');
+
+  function updateTimer() {
+    const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+    const s = String(secondsLeft % 60).padStart(2, '0');
+    timerEl.textContent = `${m}:${s}`;
+
+    if (secondsLeft <= 0) {
+      clearInterval(timerInterval);
+      timerEl.textContent = 'Expired';
+      timerEl.style.color = 'var(--error)';
+      resendBtn.classList.add('show');
+      verifyBtn.disabled = true;
+    }
+    secondsLeft--;
+  }
+
+  updateTimer();
+  const timerInterval = setInterval(updateTimer, 1000);
+
+  resendBtn.addEventListener('click', async () => {
+    resendBtn.textContent = 'Sending…';
+    resendBtn.disabled = true;
+    try {
+      await apiPost('php/resend_otp.php', { user_id: pending.userId });
+      Toast.success('New OTP sent to your phone');
+    } catch {
+      Toast.warning('Demo mode — OTP re-sent (simulated)');
+    }
+    secondsLeft = 300;
+    resendBtn.classList.remove('show');
+    resendBtn.textContent = 'Resend code';
+    resendBtn.disabled = false;
+    timerEl.style.color = '';
+  });
+
+  // Submit
+  document.getElementById('otpForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const otp = getOtp();
+    if (otp.length !== 6) { Toast.error('Enter all 6 digits'); return; }
+
+    setLoading(verifyBtn, true);
+    try {
+      const res = await apiPost('php/verify_otp.php', {
+        user_id: pending.userId,
+        otp_code: otp,
+        type: 'signup',
+      });
+
+      if (res.success) {
+        sessionStorage.removeItem('urugo_pending_user');
+        Toast.success('Phone verified! Account activated.');
+        setTimeout(() => { window.location.href = 'login.html'; }, 1100);
+      } else {
+        Toast.error(res.message || 'Invalid OTP');
+        inputs.forEach(i => { i.value = ''; i.classList.remove('filled'); });
+        inputs[0].focus();
+        verifyBtn.disabled = true;
+      }
+    } catch {
+      // Demo mode
+      Toast.success('Demo mode — account activated!');
+      sessionStorage.removeItem('urugo_pending_user');
+      setTimeout(() => { window.location.href = 'login.html'; }, 1100);
+    } finally {
+      setLoading(verifyBtn, false);
+    }
+  });
+});
+</script>
+</body>
+</html>

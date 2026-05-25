@@ -1,0 +1,193 @@
+<script src="assets/login/js/auth-guard.js"></script>
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Urugo Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="header-brand">
+        <div class="brand-mark">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="2" width="10" height="10" rx="2" fill="currentColor" opacity="0.9"/>
+            <rect x="16" y="2" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+            <rect x="2" y="16" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+            <rect x="16" y="16" width="10" height="10" rx="2" fill="currentColor" opacity="0.9"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Urugo</span>
+          <span class="brand-sub">Management System</span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <!-- Theme Toggle -->
+        <button class="theme-toggle" id="themeToggle" title="Toggle theme" aria-label="Toggle light/dark theme">
+          <span class="theme-icon theme-icon--dark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+            </svg>
+          </span>
+          <span class="theme-icon theme-icon--light">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="5"/>
+              <line x1="12" y1="1" x2="12" y2="3"/>
+              <line x1="12" y1="21" x2="12" y2="23"/>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+              <line x1="1" y1="12" x2="3" y2="12"/>
+              <line x1="21" y1="12" x2="23" y2="12"/>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+            </svg>
+          </span>
+        </button>
+
+        <!-- MIC Button -->
+        <a href="assets/urugo/voice.html" class="mic-button" title="Voice Control" aria-label="Open Voice Control">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+            <line x1="12" y1="19" x2="12" y2="23"/>
+            <line x1="8" y1="23" x2="16" y2="23"/>
+          </svg>
+        </a>
+
+        <!-- MQTT Status -->
+        <div class="mqtt-status" id="mqttStatus">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-label" id="statusLabel">Connecting</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="container">
+
+      <!-- SECTION: Sensors -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Environment</h2>
+          <span class="section-meta">Live sensor feed</span>
+        </div>
+        <div class="sensor-grid">
+
+          <!-- Temperature Card -->
+          <div class="sensor-card">
+            <div class="sensor-icon sensor-icon--temp">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+              </svg>
+            </div>
+            <div class="sensor-content">
+              <span class="sensor-label">Temperature</span>
+              <div class="sensor-value-row">
+                <span class="sensor-value" id="tempValue">--</span>
+                <span class="sensor-unit">°C</span>
+              </div>
+            </div>
+            <div class="sensor-sparkline">
+              <div class="sparkline-bar" style="height:40%"></div>
+              <div class="sparkline-bar" style="height:55%"></div>
+              <div class="sparkline-bar" style="height:45%"></div>
+              <div class="sparkline-bar" style="height:70%"></div>
+              <div class="sparkline-bar" style="height:60%"></div>
+              <div class="sparkline-bar active" style="height:65%"></div>
+            </div>
+          </div>
+
+          <!-- Humidity Card -->
+          <div class="sensor-card">
+            <div class="sensor-icon sensor-icon--humidity">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+            </div>
+            <div class="sensor-content">
+              <span class="sensor-label">Humidity</span>
+              <div class="sensor-value-row">
+                <span class="sensor-value" id="humidityValue">--</span>
+                <span class="sensor-unit">%</span>
+              </div>
+            </div>
+            <div class="sensor-sparkline">
+              <div class="sparkline-bar" style="height:60%"></div>
+              <div class="sparkline-bar" style="height:75%"></div>
+              <div class="sparkline-bar" style="height:65%"></div>
+              <div class="sparkline-bar" style="height:50%"></div>
+              <div class="sparkline-bar" style="height:80%"></div>
+              <div class="sparkline-bar active" style="height:72%"></div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION: Devices -->
+      <section class="section">
+        <div class="section-header">
+          <h2 class="section-title">Devices</h2>
+          <span class="section-meta" id="activeCount">0 of 5 active</span>
+        </div>
+        <div class="device-grid" id="deviceGrid">
+          <!-- Device cards injected by JS -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <button class="modal-close" id="modalClose">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <div class="modal-image-wrap">
+        <img class="modal-image" id="modalImage" src="" alt="" />
+        <div class="modal-status-badge" id="modalStatusBadge"></div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-device-info">
+          <h3 class="modal-device-name" id="modalDeviceName"></h3>
+          <p class="modal-device-channel" id="modalDeviceChannel"></p>
+        </div>
+        <div class="modal-status-line">
+          <span class="modal-status-dot" id="modalStatusDot"></span>
+          <span class="modal-status-text" id="modalStatusText"></span>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn--on" id="btnOn">Turn ON</button>
+          <button class="btn btn--off" id="btnOff">Turn OFF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JS -->
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/state.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <script src="assets/js/mqtt.js"></script>
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

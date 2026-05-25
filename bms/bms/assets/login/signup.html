@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — Urugo Management System</title>
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card" style="max-width:500px">
+
+    <!-- Logo -->
+    <a href="login.html" class="logo">
+      <div class="logo-icon">
+        <span></span><span></span>
+        <span></span><span></span>
+      </div>
+      <div class="logo-text">
+        <div class="logo-name">Urugo</div>
+        <div class="logo-sub">Management System</div>
+      </div>
+    </a>
+
+    <!-- Header -->
+    <div class="auth-header">
+      <h1 class="auth-title">Create account</h1>
+      <p class="auth-subtitle">Join Urugo to manage your IoT devices</p>
+    </div>
+
+    <!-- Form -->
+    <form class="auth-form" id="signupForm" novalidate>
+
+      <div class="form-group">
+        <label class="form-label" for="fullName">Full name</label>
+        <div class="input-wrap">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="fullName" name="full_name" placeholder="Jean Pierre Uwimana" autocomplete="name" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email address</label>
+        <div class="input-wrap">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="phone">Phone number</label>
+        <div class="phone-group">
+          <div class="phone-prefix">+250</div>
+          <div class="input-wrap">
+            <input type="tel" id="phone" name="phone" placeholder="078 000 0000" autocomplete="tel-local" maxlength="12" />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <div class="input-wrap">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input type="password" id="password" name="password" placeholder="Min. 8 characters" autocomplete="new-password" />
+          <button type="button" class="toggle-pw" aria-label="Toggle password visibility"></button>
+        </div>
+        <div class="pw-strength">
+          <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+          <div class="strength-text" id="strengthText"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirm password</label>
+        <div class="input-wrap">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <input type="password" id="confirmPassword" name="confirm_password" placeholder="Re-enter your password" autocomplete="new-password" />
+          <button type="button" class="toggle-pw" aria-label="Toggle password visibility"></button>
+        </div>
+      </div>
+
+      <label class="checkbox-group">
+        <input type="checkbox" id="terms" />
+        <span class="checkbox-box"></span>
+        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+      </label>
+
+      <button type="submit" class="btn btn-primary" id="signupBtn">
+        <span class="btn-text">Create Account &amp; Verify</span>
+        <div class="spinner"></div>
+      </button>
+
+    </form>
+
+    <div class="auth-footer">
+      Already have an account? <a href="login.html">Sign in</a>
+    </div>
+
+  </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  initPasswordStrength('password', 'strengthFill', 'strengthText');
+
+  const form    = document.getElementById('signupForm');
+  const btn     = document.getElementById('signupBtn');
+  const nameI   = document.getElementById('fullName');
+  const emailI  = document.getElementById('email');
+  const phoneI  = document.getElementById('phone');
+  const passI   = document.getElementById('password');
+  const confI   = document.getElementById('confirmPassword');
+  const termsI  = document.getElementById('terms');
+
+  const fields = [nameI, emailI, phoneI, passI, confI];
+  fields.forEach(i => i.addEventListener('input', () => clearFieldError(i)));
+
+  function validate() {
+    clearAllErrors(form);
+    let ok = true;
+
+    if (!nameI.value.trim() || nameI.value.trim().length < 3) {
+      fieldError(nameI, 'Enter your full name (min 3 characters)'); ok = false;
+    }
+    if (!Validate.email(emailI.value)) {
+      fieldError(emailI, 'Enter a valid email address'); ok = false;
+    }
+    if (!Validate.phone(phoneI.value)) {
+      fieldError(phoneI, 'Enter a valid 9-digit phone number'); ok = false;
+    }
+    const pwCheck = Validate.password(passI.value);
+    if (!pwCheck.strong) {
+      fieldError(passI, 'Password must be at least 8 chars with upper, lower, number & symbol'); ok = false;
+    }
+    if (passI.value !== confI.value) {
+      fieldError(confI, 'Passwords do not match'); ok = false;
+    }
+    if (!termsI.checked) {
+      Toast.warning('Please accept the Terms of Service to continue');
+      ok = false;
+    }
+
+    return ok;
+  }
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    setLoading(btn, true);
+    try {
+      const res = await apiPost('php/register.php', {
+        full_name:        nameI.value.trim(),
+        email:            emailI.value.trim(),
+        phone:            '+250' + phoneI.value.replace(/\s/g, ''),
+        password:         passI.value,
+        confirm_password: confI.value,
+      });
+
+      if (res.success) {
+        Toast.success('Account created! Check your phone for the OTP.');
+        sessionStorage.setItem('urugo_pending_user', JSON.stringify({
+          email: emailI.value.trim(),
+          phone: '+250' + phoneI.value.replace(/\s/g, ''),
+          userId: res.user_id,
+        }));
+        setTimeout(() => { window.location.href = 'otp-verification.html'; }, 1000);
+      } else {
+        Toast.error(res.message || 'Registration failed');
+        if (res.field) fieldError(document.getElementById(res.field), res.message);
+      }
+    } catch (err) {
+      // Demo mode
+      Toast.warning('Demo mode — redirecting to OTP page');
+      sessionStorage.setItem('urugo_pending_user', JSON.stringify({
+        email: emailI.value.trim(),
+        phone: '+250' + phoneI.value.replace(/\s/g, ''),
+        userId: 'demo',
+      }));
+      setTimeout(() => { window.location.href = 'otp-verification.html'; }, 1000);
+    } finally {
+      setLoading(btn, false);
+    }
+  });
+});
+</script>
+</body>
+</html>
